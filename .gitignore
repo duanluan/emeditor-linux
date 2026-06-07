@@ -1,0 +1,9 @@
+build/
+dist/
+*.AppImage
+*.deb
+*.rpm
+*.msi
+*.part
+*.tar.*
+
