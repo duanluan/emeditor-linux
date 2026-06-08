@@ -4,6 +4,7 @@ set -euo pipefail
 root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd)"
 pkgname="emeditor-wine"
 pkgver="${EMEDITOR_WINE_VERSION:-26.1.1}"
+pkgrel="${PKGREL:-1}"
 appdir="${root}/build/appimage/EmEditor-Wine.AppDir"
 dist="${root}/dist"
 appimagetool="${APPIMAGETOOL:-appimagetool}"
@@ -23,4 +24,4 @@ install -Dm644 "${appdir}/emeditor-wine.desktop" "${appdir}/usr/share/applicatio
 "${root}/scripts/extract-emeditor-icon.sh" "${appdir}/emeditor-wine.png" "${root}/build/cache" >/dev/null
 install -Dm644 "${appdir}/emeditor-wine.png" "${appdir}/usr/share/icons/hicolor/256x256/apps/emeditor-wine.png"
 
-ARCH="${ARCH:-x86_64}" "${appimagetool}" "${appdir}" "${dist}/EmEditor-Wine-${pkgver}-${ARCH:-x86_64}.AppImage"
+ARCH="${ARCH:-x86_64}" "${appimagetool}" "${appdir}" "${dist}/EmEditor-Wine-${pkgver}-${pkgrel}-${ARCH:-x86_64}.AppImage"

@@ -6,6 +6,7 @@ uid="$(id -u)"
 gid="$(id -g)"
 image="${EMEDITOR_WINE_APPIMAGE_DOCKER_IMAGE:-ubuntu:24.04}"
 appimagetool_url="${APPIMAGETOOL_URL:-https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage}"
+pkgrel="${PKGREL:-1}"
 
 restore_owner() {
   docker run --rm -v "${root}:/work" -w /work "${image}" \
@@ -13,7 +14,7 @@ restore_owner() {
 }
 trap restore_owner EXIT
 
-docker run --rm -v "${root}:/work" -w /work "${image}" bash -lc "
+docker run --rm -e "PKGREL=${pkgrel}" -v "${root}:/work" -w /work "${image}" bash -lc "
   apt-get update
   DEBIAN_FRONTEND=noninteractive apt-get install -y ca-certificates curl make p7zip-full file
   curl -fL --retry 3 -o /tmp/appimagetool '${appimagetool_url}'

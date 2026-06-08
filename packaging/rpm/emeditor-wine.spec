@@ -1,8 +1,9 @@
 %global emeditor_version %{?emeditor_version}%{!?emeditor_version:26.1.1}
+%global emeditor_release %{?emeditor_release}%{!?emeditor_release:1}
 
 Name:           emeditor-wine
 Version:        %{emeditor_version}
-Release:        1%{?dist}
+Release:        %{emeditor_release}%{?dist}
 Summary:        EmEditor launcher for Wine
 License:        MIT
 URL:            https://www.emeditor.com/
@@ -46,5 +47,8 @@ install -Dm644 %{SOURCE2} %{buildroot}%{_datadir}/icons/hicolor/256x256/apps/eme
 %{_datadir}/icons/hicolor/256x256/apps/emeditor-wine.png
 
 %changelog
+* Mon Jun 08 2026 duanluan <duanluan@outlook.com> - 26.1.1-5
+- Default to window manager mode to avoid delayed editor refreshes.
+
 * Sun Jun 07 2026 duanluan <duanluan@outlook.com> - 26.1.1-1
 - Initial RPM launcher package.

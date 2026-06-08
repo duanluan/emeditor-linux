@@ -4,6 +4,7 @@ set -euo pipefail
 root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd)"
 pkgname="emeditor-wine"
 pkgver="${EMEDITOR_WINE_VERSION:-26.1.1}"
+pkgrel="${PKGREL:-1}"
 topdir="${root}/build/rpm"
 dist="${root}/dist"
 
@@ -22,5 +23,5 @@ install -Dm644 "${root}/LICENSE" "${topdir}/SOURCES/LICENSE"
 "${root}/scripts/extract-emeditor-icon.sh" "${topdir}/SOURCES/emeditor-wine.png" "${root}/build/cache" >/dev/null
 
 install -Dm644 "${root}/packaging/rpm/emeditor-wine.spec" "${topdir}/SPECS/emeditor-wine.spec"
-rpmbuild --define "_topdir ${topdir}" --define "emeditor_version ${pkgver}" -bb "${topdir}/SPECS/emeditor-wine.spec"
+rpmbuild --define "_topdir ${topdir}" --define "emeditor_version ${pkgver}" --define "emeditor_release ${pkgrel}" -bb "${topdir}/SPECS/emeditor-wine.spec"
 find "${topdir}/RPMS" -type f -name '*.rpm' -exec install -Dm644 '{}' "${dist}/" ';'
