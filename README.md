@@ -49,6 +49,7 @@ Download `.deb`, `.rpm`, or AppImage files from the
 - Uses `~/.wine-emeditor` by default.
 - Installs EmEditor 26.1.1 from the official MSI.
 - Disables DirectWrite inside EmEditor to avoid Wine startup crashes.
+- Supports refresh compatibility modes for Wine rendering/focus issues.
 - Applies DPI settings based on `xrdb`/`xrandr`.
 - Uses Noto CJK by default, and switches to Microsoft YaHei UI if available.
 - Imports Windows UI fonts from existing local font directories when present.
@@ -88,6 +89,28 @@ EMEDITOR_WINE_FONTS_DIR="$HOME/win11-fonts:/mnt/windows/Windows/Fonts" emeditor-
 EMEDITOR_WINE_LANG=en_US.UTF-8 emeditor-wine
 EMEDITOR_WINE_MSI=/path/to/emed64_26.1.1.msi emeditor-wine
 ```
+
+### Refresh Compatibility
+
+The launcher uses `EMEDITOR_WINE_REFRESH_MODE=wm` by default. `wm` means
+window manager mode: Wine lets the Linux window manager decorate and manage the
+EmEditor window, which avoids delayed editor refreshes on KDE/X11. If needed,
+try these launcher modes:
+
+```sh
+EMEDITOR_WINE_REFRESH_MODE=default emeditor-wine
+EMEDITOR_WINE_REFRESH_MODE=focus emeditor-wine
+EMEDITOR_WINE_REFRESH_MODE=desktop emeditor-wine
+EMEDITOR_WINE_DIRECTWRITE=1 emeditor-wine
+```
+
+`default` keeps the old undecorated Wine window behavior. `focus` also disables
+Wine's X11 take-focus handling. `desktop` runs EmEditor inside a Wine virtual
+desktop; set `EMEDITOR_WINE_DESKTOP_SIZE`, such as `1920x1080`, to override the
+detected size. DirectWrite stays disabled by default because it can crash
+startup under Wine, but `EMEDITOR_WINE_DIRECTWRITE=1` is available for manual
+rendering tests. The X11 driver settings are most useful on X11/XWayland; native
+Wayland Wine sessions should still launch, but may need separate testing.
 
 ## Notes
 

@@ -13,9 +13,31 @@ app="${prefix}/drive_c/users/${wine_user}/AppData/Local/Programs/EmEditor/EmEdit
 ui_font="${EMEDITOR_WINE_UI_FONT:-Noto Sans CJK SC}"
 lang="${EMEDITOR_WINE_LANG:-zh_CN.UTF-8}"
 desktop_exec="${EMEDITOR_WINE_DESKTOP_EXEC:-emeditor-wine}"
+refresh_mode="${EMEDITOR_WINE_REFRESH_MODE:-wm}"
+directwrite="${EMEDITOR_WINE_DIRECTWRITE:-0}"
 
 package_msi="/usr/share/${pkgname}/${msi_name}"
 cache_msi="${XDG_CACHE_HOME:-${HOME}/.cache}/${pkgname}/${msi_name}"
+
+validate_options() {
+  case "${refresh_mode}" in
+    default | wm | focus | desktop) ;;
+    *)
+      printf 'invalid EMEDITOR_WINE_REFRESH_MODE: %s\n' "${refresh_mode}" >&2
+      printf 'expected one of: default, wm, focus, desktop\n' >&2
+      exit 1
+      ;;
+  esac
+
+  case "${directwrite}" in
+    0 | 1) ;;
+    *)
+      printf 'invalid EMEDITOR_WINE_DIRECTWRITE: %s\n' "${directwrite}" >&2
+      printf 'expected 0 or 1\n' >&2
+      exit 1
+      ;;
+  esac
+}
 
 download_file() {
   local url="$1"
@@ -112,6 +134,27 @@ pick_dpi() {
   printf '%s\n' "${dpi}"
 }
 
+pick_desktop_size() {
+  if [[ -n "${EMEDITOR_WINE_DESKTOP_SIZE:-}" ]]; then
+    printf '%s\n' "${EMEDITOR_WINE_DESKTOP_SIZE}"
+    return
+  fi
+
+  local line size
+  if command -v xrandr >/dev/null 2>&1; then
+    line="$(xrandr --listmonitors 2>/dev/null | awk 'NR == 2 {print $0}' || true)"
+  else
+    line=""
+  fi
+
+  size="$(printf '%s\n' "${line}" | sed -n 's/.* \([0-9][0-9]*\)\/[0-9][0-9]*x\([0-9][0-9]*\)\/[0-9][0-9]*.*/\1x\2/p')"
+  if [[ "${size}" =~ ^[0-9]+x[0-9]+$ ]]; then
+    printf '%s\n' "${size}"
+  else
+    printf '1600x1000\n'
+  fi
+}
+
 hex_utf16le() {
   printf '%s' "$1" | iconv -f UTF-8 -t UTF-16LE | od -An -tx1 -v | tr -d ' \n'
 }
@@ -145,9 +188,18 @@ set_logfont() {
 configure_prefix() {
   local dpi="$1"
 
-  wine reg add 'HKCU\Software\EmSoft\EmEditor v3\Common' /v UseDirectWrite /t REG_DWORD /d 0 /f >/dev/null
-  wine reg add 'HKCU\Software\Wine\X11 Driver' /v Decorated /t REG_SZ /d N /f >/dev/null
+  wine reg add 'HKCU\Software\EmSoft\EmEditor v3\Common' /v UseDirectWrite /t REG_DWORD /d "${directwrite}" /f >/dev/null
   wine reg add 'HKCU\Software\Wine\X11 Driver' /v Managed /t REG_SZ /d Y /f >/dev/null
+  if [[ "${refresh_mode}" == "wm" || "${refresh_mode}" == "focus" ]]; then
+    wine reg add 'HKCU\Software\Wine\X11 Driver' /v Decorated /t REG_SZ /d Y /f >/dev/null
+  else
+    wine reg add 'HKCU\Software\Wine\X11 Driver' /v Decorated /t REG_SZ /d N /f >/dev/null
+  fi
+  if [[ "${refresh_mode}" == "focus" ]]; then
+    wine reg add 'HKCU\Software\Wine\X11 Driver' /v UseTakeFocus /t REG_SZ /d N /f >/dev/null
+  else
+    wine reg delete 'HKCU\Software\Wine\X11 Driver' /v UseTakeFocus /f >/dev/null 2>&1 || true
+  fi
   wine reg add 'HKCU\Control Panel\Desktop' /v LogPixels /t REG_DWORD /d "${dpi}" /f >/dev/null
   wine reg add 'HKCU\Control Panel\Desktop' /v AppliedDPI /t REG_DWORD /d "${dpi}" /f >/dev/null
   wine reg add 'HKCU\Control Panel\Desktop' /v Win8DpiScaling /t REG_DWORD /d 1 /f >/dev/null
@@ -293,6 +345,15 @@ EOF
   fi
 }
 
+run_emeditor() {
+  if [[ "${refresh_mode}" == "desktop" ]]; then
+    exec wine explorer "/desktop=EmEditor,$(pick_desktop_size)" "$(winepath -w "${app}")" "${args[@]}"
+  fi
+
+  exec wine "${app}" "${args[@]}"
+}
+
+validate_options
 export WINEPREFIX="${prefix}"
 export LANG="${lang}"
 export LC_ALL="${lang}"
@@ -319,4 +380,4 @@ for arg in "$@"; do
   fi
 done
 
-exec wine "${app}" "${args[@]}"
+run_emeditor
