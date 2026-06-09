@@ -2,7 +2,7 @@
 
 pkgname=emeditor-wine
 pkgver=26.1.1
-pkgrel=5
+pkgrel=6
 pkgdesc='EmEditor text editor running through Wine'
 arch=('x86_64')
 url='https://github.com/duanluan/emeditor-linux'

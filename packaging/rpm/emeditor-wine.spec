@@ -47,6 +47,9 @@ install -Dm644 %{SOURCE2} %{buildroot}%{_datadir}/icons/hicolor/256x256/apps/eme
 %{_datadir}/icons/hicolor/256x256/apps/emeditor-wine.png
 
 %changelog
+* Wed Jun 10 2026 duanluan <duanluan@outlook.com> - 26.1.1-6
+- Disable EmEditor tray icon by default and clean stale tray processes.
+
 * Mon Jun 08 2026 duanluan <duanluan@outlook.com> - 26.1.1-5
 - Default to window manager mode to avoid delayed editor refreshes.
 

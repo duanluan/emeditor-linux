@@ -15,6 +15,7 @@ lang="${EMEDITOR_WINE_LANG:-zh_CN.UTF-8}"
 desktop_exec="${EMEDITOR_WINE_DESKTOP_EXEC:-emeditor-wine}"
 refresh_mode="${EMEDITOR_WINE_REFRESH_MODE:-wm}"
 directwrite="${EMEDITOR_WINE_DIRECTWRITE:-0}"
+tray_icon="${EMEDITOR_WINE_TRAY_ICON:-0}"
 
 package_msi="/usr/share/${pkgname}/${msi_name}"
 cache_msi="${XDG_CACHE_HOME:-${HOME}/.cache}/${pkgname}/${msi_name}"
@@ -33,6 +34,15 @@ validate_options() {
     0 | 1) ;;
     *)
       printf 'invalid EMEDITOR_WINE_DIRECTWRITE: %s\n' "${directwrite}" >&2
+      printf 'expected 0 or 1\n' >&2
+      exit 1
+      ;;
+  esac
+
+  case "${tray_icon}" in
+    0 | 1) ;;
+    *)
+      printf 'invalid EMEDITOR_WINE_TRAY_ICON: %s\n' "${tray_icon}" >&2
       printf 'expected 0 or 1\n' >&2
       exit 1
       ;;
@@ -189,6 +199,7 @@ configure_prefix() {
   local dpi="$1"
 
   wine reg add 'HKCU\Software\EmSoft\EmEditor v3\Common' /v UseDirectWrite /t REG_DWORD /d "${directwrite}" /f >/dev/null
+  wine reg add 'HKCU\Software\EmSoft\EmEditor v3\Common' /v TrayIcon /t REG_DWORD /d "${tray_icon}" /f >/dev/null
   wine reg add 'HKCU\Software\Wine\X11 Driver' /v Managed /t REG_SZ /d Y /f >/dev/null
   if [[ "${refresh_mode}" == "wm" || "${refresh_mode}" == "focus" ]]; then
     wine reg add 'HKCU\Software\Wine\X11 Driver' /v Decorated /t REG_SZ /d Y /f >/dev/null
@@ -345,12 +356,22 @@ EOF
   fi
 }
 
+stop_disabled_tray_icon() {
+  [[ "${tray_icon}" == "0" ]] || return 0
+  wine taskkill /f /im emedtray.exe >/dev/null 2>&1 || true
+}
+
 run_emeditor() {
+  local status=0
+
   if [[ "${refresh_mode}" == "desktop" ]]; then
-    exec wine explorer "/desktop=EmEditor,$(pick_desktop_size)" "$(winepath -w "${app}")" "${args[@]}"
+    wine explorer "/desktop=EmEditor,$(pick_desktop_size)" "$(winepath -w "${app}")" "${args[@]}" || status=$?
+  else
+    wine "${app}" "${args[@]}" || status=$?
   fi
 
-  exec wine "${app}" "${args[@]}"
+  stop_disabled_tray_icon
+  return "${status}"
 }
 
 validate_options
@@ -364,10 +385,12 @@ import_optional_fonts
 
 dpi="$(pick_dpi)"
 configure_prefix "${dpi}"
+stop_disabled_tray_icon
 
 if [[ ! -f "${app}" ]]; then
   install_emeditor
   configure_prefix "${dpi}"
+  stop_disabled_tray_icon
   sync_desktop_entry
 fi
 
