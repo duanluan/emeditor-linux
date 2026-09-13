@@ -1,4 +1,4 @@
-%global emeditor_version %{?emeditor_version}%{!?emeditor_version:26.1.1}
+%global emeditor_version %{?emeditor_version}%{!?emeditor_version:26.2.7}
 %global emeditor_release %{?emeditor_release}%{!?emeditor_release:1}
 
 Name:           emeditor-wine
@@ -47,6 +47,8 @@ install -Dm644 %{SOURCE2} %{buildroot}%{_datadir}/icons/hicolor/256x256/apps/eme
 %{_datadir}/icons/hicolor/256x256/apps/emeditor-wine.png
 
 %changelog
+* Sat Sep 13 2026 duanluan <duanluan@outlook.com> - 26.2.7-1
+- Update EmEditor to 26.2.7 and refresh the pinned MSI checksum.
 * Wed Jun 10 2026 duanluan <duanluan@outlook.com> - 26.1.1-6
 - Disable EmEditor tray icon by default and clean stale tray processes.
 

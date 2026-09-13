@@ -47,7 +47,7 @@ Download `.deb`, `.rpm`, or AppImage files from the
 ## What The Launcher Does
 
 - Uses `~/.wine-emeditor` by default.
-- Installs EmEditor 26.1.1 from the official MSI.
+- Installs EmEditor 26.2.7 from the official MSI.
 - Disables DirectWrite inside EmEditor to avoid Wine startup crashes.
 - Supports refresh compatibility modes for Wine rendering/focus issues.
 - Applies DPI settings based on `xrdb`/`xrandr`.
@@ -87,7 +87,7 @@ EMEDITOR_WINE_DPI=192 emeditor-wine
 EMEDITOR_WINE_UI_FONT="Microsoft YaHei UI" emeditor-wine
 EMEDITOR_WINE_FONTS_DIR="$HOME/win11-fonts:/mnt/windows/Windows/Fonts" emeditor-wine
 EMEDITOR_WINE_LANG=en_US.UTF-8 emeditor-wine
-EMEDITOR_WINE_MSI=/path/to/emed64_26.1.1.msi emeditor-wine
+EMEDITOR_WINE_MSI=/path/to/emed64_26.2.7.msi emeditor-wine
 EMEDITOR_WINE_TRAY_ICON=1 emeditor-wine
 ```
 

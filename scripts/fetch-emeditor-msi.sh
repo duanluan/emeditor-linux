@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-pkgver="${EMEDITOR_WINE_VERSION:-26.1.1}"
+pkgver="${EMEDITOR_WINE_VERSION:-26.2.7}"
 msi_name="emed64_${pkgver}.msi"
 msi_url="${EMEDITOR_WINE_MSI_URL:-https://download.emeditor.com/${msi_name}}"
-msi_sha256="${EMEDITOR_WINE_MSI_SHA256:-bc54ae3700a657c159f176b8f5ad646a4cfef3090d8097ff8dfa99067340f5b5}"
+msi_sha256="${EMEDITOR_WINE_MSI_SHA256:-8999dc0c78a199f15c1b1e6b49b5b5322dc43a36df5b60b09b8f5ce86c4a8f74}"
 cache_dir="${1:-build/cache}"
 msi_path="${cache_dir}/${msi_name}"
 

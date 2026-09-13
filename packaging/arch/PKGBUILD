@@ -1,7 +1,7 @@
 # Maintainer: duanluan <duanluan@outlook.com>
 
 pkgname=emeditor-wine
-pkgver=26.1.1
+pkgver=26.2.7
 pkgrel=6
 pkgdesc='EmEditor text editor running through Wine'
 arch=('x86_64')
@@ -31,7 +31,7 @@ source=(
 )
 sha256sums=(
   'SKIP'
-  'bc54ae3700a657c159f176b8f5ad646a4cfef3090d8097ff8dfa99067340f5b5'
+  '8999dc0c78a199f15c1b1e6b49b5b5322dc43a36df5b60b09b8f5ce86c4a8f74'
 )
 
 package() {

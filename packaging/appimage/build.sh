@@ -3,7 +3,7 @@ set -euo pipefail
 
 root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd)"
 pkgname="emeditor-wine"
-pkgver="${EMEDITOR_WINE_VERSION:-26.1.1}"
+pkgver="${EMEDITOR_WINE_VERSION:-26.2.7}"
 pkgrel="${PKGREL:-1}"
 appdir="${root}/build/appimage/EmEditor-Wine.AppDir"
 dist="${root}/dist"
