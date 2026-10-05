@@ -1,4 +1,4 @@
-.PHONY: deb rpm appimage aur-source docker-rpm docker-appimage docker-packages clean
+.PHONY: deb rpm appimage aur-source docker-deb docker-rpm docker-appimage docker-packages clean
 
 deb:
 	./packaging/deb/build.sh
@@ -12,13 +12,16 @@ appimage:
 aur-source:
 	./packaging/arch/prepare-aur-source.sh
 
+docker-deb:
+	./packaging/docker/build-deb.sh
+
 docker-rpm:
 	./packaging/docker/build-rpm.sh
 
 docker-appimage:
 	./packaging/docker/build-appimage.sh
 
-docker-packages: docker-rpm docker-appimage
+docker-packages: docker-deb docker-rpm docker-appimage
 
 clean:
 	rm -rf build dist
